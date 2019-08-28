@@ -157,4 +157,26 @@ class ColoredCircleView(ctx : Context) : View(ctx){
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : ColoredCircleView) {
+
+        private val animator : Animator = Animator(view)
+        private val cc : ColoredCircles = ColoredCircles(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            cc.draw(canvas, paint)
+            animator.animate {
+                cc.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            cc.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
