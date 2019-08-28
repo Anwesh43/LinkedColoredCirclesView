@@ -180,4 +180,12 @@ class ColoredCircleView(ctx : Context) : View(ctx){
             }
         }
     }
+
+    companion object {
+        fun create(activity: Activity) : ColoredCircleView {
+            val view : ColoredCircleView = ColoredCircleView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
