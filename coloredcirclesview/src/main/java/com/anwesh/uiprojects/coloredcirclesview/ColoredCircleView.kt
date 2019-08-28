@@ -133,4 +133,28 @@ class ColoredCircleView(ctx : Context) : View(ctx){
             return this
         }
     }
+
+    data class ColoredCircles(var i : Int) {
+
+        private var root : CCNode = CCNode(0)
+        private var curr : CCNode = root
+        private var dir : Int = 1
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            curr.draw(canvas, paint, 0f)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            curr.update {
+                curr = curr.getNext(dir, {
+                    dir *= -1
+                })
+                cb(it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            curr.startUpdating(cb)
+        }
+    }
 }
