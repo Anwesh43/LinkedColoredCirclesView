@@ -81,4 +81,56 @@ class ColoredCircleView(ctx : Context) : View(ctx){
             }
         }
     }
+
+    data class CCNode(var i : Int, val state : State = State()) {
+
+        private var next : CCNode? = null
+        private var prev : CCNode? = null
+        private var x : Float = 0f
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < colors.size - 1) {
+                next = CCNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint, sc : Float) {
+            val r : Float = Math.min(canvas.width.toFloat(), canvas.height.toFloat()) / 2
+            if (x == 0f) {
+                x = 2 * r * i + r
+            }
+            paint.color = Color.parseColor(colors[i])
+            canvas.save()
+            canvas.translate(i * 2 * r + r, 0f)
+            canvas.drawCircle(-2 * r * state.scale + 2 * r * (1 - sc), 0f, r, paint)
+            canvas.restore()
+            x -= 2 * r * (state.scale + sc)
+            next?.draw(canvas, paint, state.scale + sc)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : CCNode {
+            var curr : CCNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
+        }
+    }
 }
