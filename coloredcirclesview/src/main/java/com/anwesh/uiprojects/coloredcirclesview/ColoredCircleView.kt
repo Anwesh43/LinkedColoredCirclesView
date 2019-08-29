@@ -16,6 +16,21 @@ import android.content.Context
 val scGap : Float = 0.05f
 val colors : Array<String> = arrayOf("#4527A0", "#0D47A1", "#f44336", "#00C853", "#E65100")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val lineFactor : Float = 0.4f
+val strokeFactor : Int = 90
+
+fun Int.sf() : Float = 1f - 2 * this
+
+fun Canvas.drawBiLines(h : Float, w : Float, paint : Paint) {
+    paint.strokeCap = Paint.Cap.ROUND
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    for (j in 0..1) {
+        save()
+        translate(-w / 2, lineFactor * h * j.sf())
+        drawLine(0f, 0f, w, 0f, paint)
+        restore()
+    }
+}
 
 class ColoredCircleView(ctx : Context) : View(ctx){
 
@@ -111,6 +126,7 @@ class ColoredCircleView(ctx : Context) : View(ctx){
             canvas.save()
             canvas.translate(r - w * state.scale + x, h / 2)
             canvas.drawCircle(0f, 0f, r, paint)
+            canvas.drawBiLines(h, w, paint)
             canvas.restore()
             if (state.scale != 0f) {
                 next?.draw(canvas, paint, state.scale)
