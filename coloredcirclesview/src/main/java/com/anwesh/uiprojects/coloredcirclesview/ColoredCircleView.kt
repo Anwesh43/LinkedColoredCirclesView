@@ -87,7 +87,6 @@ class ColoredCircleView(ctx : Context) : View(ctx){
 
         private var next : CCNode? = null
         private var prev : CCNode? = null
-        private var x : Float = 0f
 
         init {
             addNeighbor()
@@ -101,17 +100,21 @@ class ColoredCircleView(ctx : Context) : View(ctx){
         }
 
         fun draw(canvas : Canvas, paint : Paint, sc : Float) {
-            val r : Float = Math.min(canvas.width.toFloat(), canvas.height.toFloat()) / 2
-            if (x == 0f) {
-                x = 2 * r * i + r
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val r : Float = Math.min(w, h) / 2
+            var x = 0f
+            if (sc != 0f) {
+                x = w * (1 - sc)
             }
             paint.color = Color.parseColor(colors[i])
             canvas.save()
-            canvas.translate(i * 2 * r + r, 0f)
-            canvas.drawCircle(-2 * r * state.scale + 2 * r * (1 - sc), 0f, r, paint)
+            canvas.translate(r - w * state.scale + x, h / 2)
+            canvas.drawCircle(0f, 0f, r, paint)
             canvas.restore()
-            x -= 2 * r * (state.scale + sc)
-            next?.draw(canvas, paint, state.scale + sc)
+            if (state.scale != 0f) {
+                next?.draw(canvas, paint, state.scale)
+            }
         }
 
         fun update(cb : (Float) -> Unit) {
